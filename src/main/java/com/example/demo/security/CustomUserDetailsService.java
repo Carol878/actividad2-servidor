@@ -10,7 +10,7 @@ import com.example.demo.modelo.Usuario;
 import com.example.demo.repository.UsuarioRepository;
 
 @Service
-public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService { //para que no tenga el
+public class CustomUserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService { //para que no tenga el
                                                                                                         // mismo nombre
     @Autowired
     private UsuarioRepository usuarioRepository;

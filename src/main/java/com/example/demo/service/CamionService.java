@@ -40,5 +40,25 @@ public class CamionService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         return camionRepository.findByConductor(conductor);
     }
+
+    // Necesario para el admin o para listar todos sin filtro
+    public List<Camion> listarTodos() {
+        return camionRepository.findAll();
+    }
+
+    // Necesario para ver el detalle de UN solo camión
+    public Camion obtenerPorId(String id) {
+        return camionRepository.findById(id).orElse(null);
+    }
+
+    // Necesario para borrar un camión
+    public void borrar(String id) {
+        camionRepository.deleteById(id);
+    }
+
+    // Necesario para actualizar (PUT)
+    public Camion guardar(Camion camion) {
+        return camionRepository.save(camion);
+    }
 }
 

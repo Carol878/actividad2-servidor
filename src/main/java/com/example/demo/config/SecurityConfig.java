@@ -1,6 +1,6 @@
-/*package com.example.demo.config;
+package com.example.demo.config;
 
-import com.example.demo.security.UserDetailsService;
+import com.example.demo.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +22,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // Desactivamos CSRF porque es una API REST (no usa cookies de sesión de navegador)
                 .csrf(csrf -> csrf.disable())
@@ -45,21 +45,21 @@ public class SecurityConfig {
 
     // Bean para encriptar contraseñas (NUNCA guardar texto plano)
     @Bean
-    	PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     // Conecta nuestro UserDetailsService con la configuración global
     @Bean
-    	DaoAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
+    DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService userDetailsService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
 
     @Bean
-    	AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+    AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
-}*/
+}
 

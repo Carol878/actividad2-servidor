@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,20 +25,44 @@ public class CamionController {
     @Autowired
     private CamionService camionService;
 
-    @PostMapping
-    @PreAuthorize("hasRole('CONDUCTOR')")
-    public ResponseEntity<?> crearCamion(@RequestBody CamionDTO dto, Authentication auth) {
-        try {
-            Camion nuevo = camionService.crearCamion(dto, auth.getName());
-            return ResponseEntity.ok(nuevo);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Camion> obtenerPorId(@PathVariable String id) {
+        Camion camion = camionService.obtenerPorId(id);
+        if (camion != null) {
+            return ResponseEntity.ok(camion);
         }
+        return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/mis-camiones")
-    @PreAuthorize("hasRole('CONDUCTOR')")
-    public ResponseEntity<List<Camion>> misCamiones(Authentication auth) {
-        return ResponseEntity.ok(camionService.obtenerMisCamiones(auth.getName()));
+    @PutMapping("/{id}")
+    public ResponseEntity<Camion> actualizar(@PathVariable String id, @RequestBody Camion camionNuevo) {
+        Camion camionExistente = camionService.obtenerPorId(id);
+        if (camionExistente != null) {
+            camionNuevo.setId(id); // Aseguramos que el ID sea el mismo
+            // Importante: No perder el conductorId si no viene en el JSON
+            if (camionNuevo.getConductorId() == null) {
+                camionNuevo.setConductorId(camionExistente.getConductorId());
+            }
+            return ResponseEntity.ok(camionService.guardar(camionNuevo));
+        }
+        return ResponseEntity.notFound().build();
+
+        @PostMapping
+        @PreAuthorize("hasRole('CONDUCTOR')")
+        public ResponseEntity<?> crearCamion(@RequestBody CamionDTO dto, Authentication auth) {
+            try {
+                Camion nuevo = camionService.crearCamion(dto, auth.getName());
+                return ResponseEntity.ok(nuevo);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+        }
+
+        @GetMapping("/mis-camiones")
+        @PreAuthorize("hasRole('CONDUCTOR')")
+        public ResponseEntity<List<Camion>> misCamiones(Authentication auth) {
+            return ResponseEntity.ok(camionService.obtenerMisCamiones(auth.getName()));
+        }
     }
 }
